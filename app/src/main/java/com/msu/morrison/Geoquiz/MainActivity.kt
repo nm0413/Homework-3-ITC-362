@@ -6,6 +6,8 @@ import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import com.msu.morrison.Geoquiz.databinding.ActivityMainBinding
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 
 private const val TAG = "MainActivity"
@@ -61,12 +63,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.nextButton.setOnClickListener{
-            answerChosen = false
             enableButtons()
 
             if (currentIndex == questionBank.size - 1){
+                answerChosen = false
                 checkAndDisplayScore()
             } else {
+                answerChosen = false
                 currentIndex = (currentIndex + 1) % questionBank.size
                 updateQuestion()
             }
@@ -90,19 +93,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateCorrectAnswersCount(isCorrect: Boolean){
-        if(isCorrect) {
+        if (isCorrect) {
             correctAnswersCount++
         }
     }
 
     private fun checkAndDisplayScore(){
         if(currentIndex == questionBank.size - 1) {
-            val score = (correctAnswersCount.toFloat() / questionBank.size) * 100
-            val formattedScore = String.format("%.1f%%", score)
+            val score = (correctAnswersCount.toDouble() / questionBank.size) * 100.0
+            val formattedScore = BigDecimal(score).setScale(1,RoundingMode.HALF_EVEN).toString() + "%"
             Toast.makeText(this, "Your score: $formattedScore", Toast.LENGTH_SHORT).show()
 
             correctAnswersCount = 0
         }
+
     }
 
     private fun disableButtons(){
